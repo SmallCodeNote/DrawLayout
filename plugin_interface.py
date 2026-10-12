@@ -5,11 +5,11 @@ from PySide6.QtCore import QObject, Signal, QPointF
 import ezdxf
 
 class PluginSignalEmitter(QObject):
-    """QObject非継承クラスでもSignalを扱えるようにするエミッター"""
+    """Emitter to handle Signals even in classes that do not inherit from QObject"""
     parameters_changed = Signal()
 
 class ShapePluginInterface(ABC):
-    """すべての図形プラグインが継承すべき抽象基底クラス"""
+    """Abstract base class that all shape plugins must inherit from"""
 
     def __init__(self) -> None:
         self.signals = PluginSignalEmitter()
@@ -17,36 +17,36 @@ class ShapePluginInterface(ABC):
     @property
     @abstractmethod
     def plugin_name(self) -> str:
-        """UIに表示するプラグイン名"""
+        """Plugin name to display in the UI"""
         pass
 
     @property
     @abstractmethod
     def plugin_id(self) -> str:
-        """設定保存用のユニークID"""
+        """Unique ID for saving configurations"""
         pass
 
     @abstractmethod
     def create_parameter_widget(self) -> QWidget:
-        """パラメータ調整用GUIウィジェットを生成して返す"""
+        """Generates and returns a GUI widget for parameter adjustment"""
         pass
 
     @abstractmethod
     def generate_graphics_item(self, params: Dict[str, Any]) -> QGraphicsItem:
-        """指定されたパラメータに基づきQGraphicsItemを生成して返す"""
+        """Generates and returns a QGraphicsItem based on the specified parameters"""
         pass
 
     @abstractmethod
     def export_to_dxf(self, msp: Any, params: Dict[str, Any], position: QPointF) -> None:
-        """ezdxfのモデルスペース(msp)に図形エンティティを追加する"""
+        """Adds shape entities to the ezdxf modelspace (msp)"""
         pass
 
     @abstractmethod
     def get_current_parameters(self) -> Dict[str, Any]:
-        """現在のGUI入力値を辞書型で取得する"""
+        """Retrieves current GUI input values as a dictionary"""
         pass
 
     @abstractmethod
     def set_parameters(self, params: Dict[str, Any]) -> None:
-        """外部から読み込んだパラメータ辞書をGUIに反映する"""
+        """Reflects the parameter dictionary loaded from external sources onto the GUI"""
         pass
