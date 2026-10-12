@@ -10,14 +10,14 @@ import ezdxf
 from plugin_interface import ShapePluginInterface
 
 class EditableRectItem(QGraphicsRectItem):
-    """Custom rectangle item that opens a parameter editing dialog on double-click"""
+    """Custom rectangle item that opens a parameter editing dialog on double click."""
 
     def __init__(self, x: float, y: float, w: float, h: float, plugin: 'RectanglePlugin', params: Dict[str, Any]) -> None:
         super().__init__(x, y, w, h)
         self.plugin = plugin
         self.params = params
         
-        # Selection and movement flags
+        # Selection/Movement flags
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
         
@@ -25,14 +25,14 @@ class EditableRectItem(QGraphicsRectItem):
         self.setPen(pen)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
-        """Displays an independent parameter editing dialog upon double-click"""
+        """Displays an independent parameter editing dialog upon double-clicking."""
         dialog = QDialog()
         dialog.setWindowTitle(f"{self.plugin.plugin_name} - Parameter Editing")
         dialog.resize(300, 150)
         
         layout = QVBoxLayout(dialog)
 
-        # Individually create the form and spin boxes for the dialog
+        # Create form and spin boxes for the dialog individually
         form_widget = QWidget()
         form_layout = QFormLayout(form_widget)
 
@@ -58,7 +58,7 @@ class EditableRectItem(QGraphicsRectItem):
         button_box.rejected.connect(dialog.reject)
         layout.addWidget(button_box)
 
-        # Execute the dialog; if accepted, update parameters and redraw the shape
+        # Execute the dialog and update parameters if OK is clicked
         if dialog.exec() == QDialog.DialogCode.Accepted:
             new_params = {
                 "width": spin_w.value(),
@@ -67,7 +67,7 @@ class EditableRectItem(QGraphicsRectItem):
             self.params = new_params
             self.setData(1, new_params)  # Update metadata as well
             
-            # Update rectangle size and shape
+            # Update the size and shape of the rectangle
             w = float(new_params["width"])
             h = float(new_params["height"])
             self.setRect(-w / 2.0, -h / 2.0, w, h)
@@ -76,7 +76,7 @@ class EditableRectItem(QGraphicsRectItem):
 
 
 class RectanglePlugin(ShapePluginInterface):
-    """Sample shape plugin that draws a rectangle"""
+    """Sample shape plugin that draws a rectangle."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -85,14 +85,14 @@ class RectanglePlugin(ShapePluginInterface):
 
     @property
     def plugin_name(self) -> str:
-        return "Rectangle"
+        return "Rectangle" # Translated from "矩形 (Rectangle)"
 
     @property
     def plugin_id(self) -> str:
         return "std.rectangle"
 
     def create_parameter_widget(self) -> QWidget:
-        """Creates parameter adjustment UI for the main screen"""
+        """Creates the parameter adjustment UI for the main screen."""
         widget = QWidget()
         layout = QFormLayout(widget)
 
@@ -108,21 +108,24 @@ class RectanglePlugin(ShapePluginInterface):
         self._spin_height.setSuffix(" mm")
         self._spin_height.valueChanged.connect(lambda: self.signals.parameters_changed.emit())
 
-        layout.addRow("Width:", self._spin_width)
-        layout.addRow("Height:", self._spin_height)
+        layout.addRow("Width:", self._spin_width) # Translated from "幅 (Width):"
+        layout.addRow("Height:", self._spin_height) # Translated from "高さ (Height):"
 
         return widget
 
-    def generate_graphics_item(self, params: Dict[str, Any]) -> QGraphicsItem:
-        """Generates and returns a custom rectangle item that supports double-clicking"""
-        w = float(params.get("width", 100.0))
-        h = float(params.get("height", 60.0))
+    def generate_graphics_item(self, params: Dict[str, Any], drawing_scale: float = 1.0, pixel_scale: float = 2.83) -> QGraphicsItem:
+        w_real = float(params.get("width", 100.0))
+        h_real = float(params.get("height", 60.0))
+
+        # Preview screen size = Real dimensions (mm) * Drawing scale * px/mm scale
+        w = w_real * drawing_scale * pixel_scale
+        h = h_real * drawing_scale * pixel_scale
 
         item = EditableRectItem(-w / 2.0, -h / 2.0, w, h, self, params)
         return item
 
     def export_to_dxf(self, msp: Any, params: Dict[str, Any], position: QPointF) -> None:
-        """Generation of LWPOLYLINE for ezdxf"""
+        """Generates LWPOLYLINE suitable for ezdxf."""
         w = float(params.get("width", 100.0))
         h = float(params.get("height", 60.0))
         cx, cy = position.x(), position.y()
