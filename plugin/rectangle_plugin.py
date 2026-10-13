@@ -10,14 +10,14 @@ import ezdxf
 from plugin_interface import ShapePluginInterface
 
 class EditableRectItem(QGraphicsRectItem):
-    """Custom rectangle item that opens a parameter editing dialog on double click."""
+    """A custom rectangular item that opens a parameter editing dialog on double-click."""
 
     def __init__(self, x: float, y: float, w: float, h: float, plugin: 'RectanglePlugin', params: Dict[str, Any]) -> None:
         super().__init__(x, y, w, h)
         self.plugin = plugin
         self.params = params
         
-        # Selection/Movement flags
+        # Selection and movement flags
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
         
@@ -25,14 +25,14 @@ class EditableRectItem(QGraphicsRectItem):
         self.setPen(pen)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
-        """Displays an independent parameter editing dialog upon double-clicking."""
+        """Displays a separate parameter editing dialog on double-click."""
         dialog = QDialog()
-        dialog.setWindowTitle(f"{self.plugin.plugin_name} - Parameter Editing")
+        dialog.setWindowTitle(f"{self.plugin.plugin_name} - Parameter Editing") # Translated title
         dialog.resize(300, 150)
         
         layout = QVBoxLayout(dialog)
 
-        # Create form and spin boxes for the dialog individually
+        # Creates form and spin boxes for the dialog
         form_widget = QWidget()
         form_layout = QFormLayout(form_widget)
 
@@ -46,11 +46,11 @@ class EditableRectItem(QGraphicsRectItem):
         spin_h.setValue(float(self.params.get("height", 60.0)))
         spin_h.setSuffix(" mm")
 
-        form_layout.addRow("Width:", spin_w)
-        form_layout.addRow("Height:", spin_h)
+        form_layout.addRow("Width:", spin_w) # Translated label
+        form_layout.addRow("Height:", spin_h) # Translated label
         layout.addWidget(form_widget)
 
-        # OK / Cancel buttons
+        # OK / Cancel buttons for the dialog
         button_box = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
         )
@@ -58,16 +58,16 @@ class EditableRectItem(QGraphicsRectItem):
         button_box.rejected.connect(dialog.reject)
         layout.addWidget(button_box)
 
-        # Execute the dialog and update parameters if OK is clicked
+        # Executes the dialog, and if accepted, updates parameters and redraw shape
         if dialog.exec() == QDialog.DialogCode.Accepted:
             new_params = {
                 "width": spin_w.value(),
                 "height": spin_h.value()
             }
             self.params = new_params
-            self.setData(1, new_params)  # Update metadata as well
-            
-            # Update the size and shape of the rectangle
+            self.setData(1, new_params)  # Update metadata
+
+            # Updates the rectangle size and shape
             w = float(new_params["width"])
             h = float(new_params["height"])
             self.setRect(-w / 2.0, -h / 2.0, w, h)
@@ -76,7 +76,7 @@ class EditableRectItem(QGraphicsRectItem):
 
 
 class RectanglePlugin(ShapePluginInterface):
-    """Sample shape plugin that draws a rectangle."""
+    """A sample shape plugin that draws a rectangle."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -85,7 +85,7 @@ class RectanglePlugin(ShapePluginInterface):
 
     @property
     def plugin_name(self) -> str:
-        return "Rectangle" # Translated from "矩形 (Rectangle)"
+        return "Rectangle" # Translated name
 
     @property
     def plugin_id(self) -> str:
@@ -108,8 +108,8 @@ class RectanglePlugin(ShapePluginInterface):
         self._spin_height.setSuffix(" mm")
         self._spin_height.valueChanged.connect(lambda: self.signals.parameters_changed.emit())
 
-        layout.addRow("Width:", self._spin_width) # Translated from "幅 (Width):"
-        layout.addRow("Height:", self._spin_height) # Translated from "高さ (Height):"
+        layout.addRow("Width:", self._spin_width) # Translated label
+        layout.addRow("Height:", self._spin_height) # Translated label
 
         return widget
 
@@ -117,7 +117,7 @@ class RectanglePlugin(ShapePluginInterface):
         w_real = float(params.get("width", 100.0))
         h_real = float(params.get("height", 60.0))
 
-        # Preview screen size = Real dimensions (mm) * Drawing scale * px/mm scale
+        # Preview screen size = Real dimensions (mm) * Drawing Scale * px/mm scale factor
         w = w_real * drawing_scale * pixel_scale
         h = h_real * drawing_scale * pixel_scale
 
@@ -125,12 +125,12 @@ class RectanglePlugin(ShapePluginInterface):
         return item
 
     def export_to_dxf(self, msp: Any, params: Dict[str, Any], position: QPointF) -> None:
-        """Generates LWPOLYLINE suitable for ezdxf."""
         w = float(params.get("width", 100.0))
         h = float(params.get("height", 60.0))
         cx, cy = position.x(), position.y()
 
-        x1, y1 = cx - w / 2.0, cy - h / 2.0
+        # Adjust coordinates for DXF model space (assuming center-based preview)
+        x1, y1 = cx - w / 2.0, cy - h / 2.0 # Bottom Left in Qt view coords if Y is inverted later by export_manager
         x2, y2 = cx + w / 2.0, cy - h / 2.0
         x3, y3 = cx + w / 2.0, cy + h / 2.0
         x4, y4 = cx - w / 2.0, cy + h / 2.0
