@@ -5,11 +5,11 @@ from PySide6.QtCore import QObject, Signal, QPointF
 import ezdxf
 
 class PluginSignalEmitter(QObject):
-    """Emitter to handle Signals even in classes that do not inherit from QObject"""
+    """An emitter that allows Signals to be handled even if not inheriting from QObject."""
     parameters_changed = Signal()
 
 class ShapePluginInterface(ABC):
-    """Abstract base class that all shape plugins must inherit from"""
+    """Abstract base class that all shape plugins must inherit from."""
 
     def __init__(self) -> None:
         self.signals = PluginSignalEmitter()
@@ -17,36 +17,36 @@ class ShapePluginInterface(ABC):
     @property
     @abstractmethod
     def plugin_name(self) -> str:
-        """Plugin name to display in the UI"""
+        """The name of the plugin displayed in the UI."""
         pass
 
     @property
     @abstractmethod
     def plugin_id(self) -> str:
-        """Unique ID for saving configurations"""
+        """A unique ID for saving settings."""
         pass
 
     @abstractmethod
     def create_parameter_widget(self) -> QWidget:
-        """Generates and returns a GUI widget for parameter adjustment"""
+        """Generates and returns the GUI widget for parameter adjustment."""
         pass
 
     @abstractmethod
     def generate_graphics_item(self, params: Dict[str, Any]) -> QGraphicsItem:
-        """Generates and returns a QGraphicsItem based on the specified parameters"""
+        """Generates and returns a QGraphicsItem based on specified parameters."""
         pass
 
     @abstractmethod
     def export_to_dxf(self, msp: Any, params: Dict[str, Any], position: QPointF) -> None:
-        """Adds shape entities to the ezdxf modelspace (msp)"""
+        """Adds the shape entity to the model space (msp) of ezdxf."""
         pass
 
     @abstractmethod
     def get_current_parameters(self) -> Dict[str, Any]:
-        """Retrieves current GUI input values as a dictionary"""
+        """Retrieves current GUI input values as a dictionary."""
         pass
 
     @abstractmethod
     def set_parameters(self, params: Dict[str, Any]) -> None:
-        """Reflects the parameter dictionary loaded from external sources onto the GUI"""
+        """Reflect external parameter dictionaries onto the GUI."""
         pass
