@@ -11,7 +11,7 @@ import ezdxf
 from plugin_interface import ShapePluginInterface
 
 class EditableDrawingFrameGroup(QGraphicsItemGroup):
-    """A custom drawing frame group that allows editing of paper size, orientation, title, and scale via double-click."""
+    """A custom drawing frame group that allows editing paper size, orientation, title, and scale via double-click."""
 
     def __init__(self, plugin: 'DrawingFramePlugin', params: Dict[str, Any]) -> None:
         super().__init__()
@@ -22,17 +22,16 @@ class EditableDrawingFrameGroup(QGraphicsItemGroup):
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, True)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
-        """Displays the paper settings and scale editing dialog on double-click."""
+        """Displays a dialog for editing paper settings and scale on double-click."""
         dialog = QDialog()
-        # Translated parameter editing title
-        dialog.setWindowTitle(f"{self.plugin.plugin_name} - Parameter Editing") 
+        dialog.setWindowTitle(f"{self.plugin.plugin_name} - Parameter Editing")
         dialog.resize(320, 240)
         
         layout = QVBoxLayout(dialog)
         form_widget = QWidget()
         form_layout = QFormLayout(form_widget)
 
-        # 1. Paper Size
+        # 1. Paper Size selection
         combo_size = QComboBox()
         combo_size.addItems(["A4", "A3"])
         current_size = self.params.get("size", "A4")
@@ -40,20 +39,19 @@ class EditableDrawingFrameGroup(QGraphicsItemGroup):
         if idx >= 0:
             combo_size.setCurrentIndex(idx)
 
-        # 2. Orientation
+        # 2. Orientation selection
         combo_orient = QComboBox()
-        # English labels for orientation
-        combo_orient.addItems(["Landscape", "Portrait"]) 
+        combo_orient.addItems(["Landscape", "Portrait"]) # Translated options
         current_orient = self.params.get("orientation", "Landscape")
         idx2 = combo_orient.findText(current_orient)
         if idx2 >= 0:
             combo_orient.setCurrentIndex(idx2)
 
-        # 3. Title Information
+        # 3. Title information input
         line_title = QLineEdit()
-        line_title.setText(self.params.get("title", "2D Drawing Layout"))
+        line_title.setText(self.params.get("title", "2D Drawing Layout")) # Translated default title
 
-        # 4. Scale
+        # 4. Scale selection (Scale Factor)
         combo_scale = QComboBox()
         combo_scale.addItems(["1:1", "1:2", "1:5", "1:10", "2:1", "5:1"])
         current_scale = self.params.get("scale", "1:1")
@@ -61,11 +59,10 @@ class EditableDrawingFrameGroup(QGraphicsItemGroup):
         if idx3 >= 0:
             combo_scale.setCurrentIndex(idx3)
 
-        # Using English labels for form layout
-        form_layout.addRow("Paper Size:", combo_size)
-        form_layout.addRow("Orientation:", combo_orient)
-        form_layout.addRow("Title:", line_title)
-        form_layout.addRow("Scale:", combo_scale)
+        form_layout.addRow("Paper Size:", combo_size) # Translated label
+        form_layout.addRow("Orientation:", combo_orient) # Translated label
+        form_layout.addRow("Title:", line_title) # Translated label
+        form_layout.addRow("Scale (Ratio):", combo_scale) # Translated label
         layout.addWidget(form_widget)
 
         button_box = QDialogButtonBox(
@@ -119,11 +116,11 @@ class EditableDrawingFrameGroup(QGraphicsItemGroup):
             self.addToGroup(title_box)
 
             size_str = new_params["size"]
-            orient_str = new_params["orientation"] # This is now "Landscape" or "Portrait"
+            orient_str = new_params["orientation"]
             title_str = new_params["title"]
             scale_str = new_params["scale"]
             
-            text_item = QGraphicsTextItem(f"Title: {title_str}\nSize: {size_str} ({orient_str})\nScale: {scale_str}")
+            text_item = QGraphicsTextItem(f"Title: {title_str}\nSize: {size_str} ({orient_str})\nScale: {scale_str}") # Translated text content
             text_item.setPos(tb_x + 5, tb_y + 5)
             text_item.setDefaultTextColor(QColor(30, 30, 30))
             self.addToGroup(text_item)
@@ -148,14 +145,14 @@ class DrawingFramePlugin(ShapePluginInterface):
 
     @property
     def plugin_name(self) -> str:
-        # Translated property name
-        return "Drawing Frame & Title" 
+        return "Drawing Frame" # Translated name
 
     @property
     def plugin_id(self) -> str:
         return "std.drawing_frame"
 
     def create_parameter_widget(self) -> QWidget:
+        """Creates the parameter adjustment UI for the main screen."""
         widget = QWidget()
         layout = QFormLayout(widget)
 
@@ -164,45 +161,44 @@ class DrawingFramePlugin(ShapePluginInterface):
         self._combo_size.currentIndexChanged.connect(lambda: self.signals.parameters_changed.emit())
 
         self._combo_orientation = QComboBox()
-        # Using English labels here too for consistency
+        # Translated options for orientation in the UI
         self._combo_orientation.addItems(["Landscape", "Portrait"]) 
         self._combo_orientation.currentIndexChanged.connect(lambda: self.signals.parameters_changed.emit())
 
         self._line_title = QLineEdit()
-        self._line_title.setText("2D Drawing Layout")
+        self._line_title.setText("2D Drawing Layout") # Translated default title
         self._line_title.textChanged.connect(lambda: self.signals.parameters_changed.emit())
 
         self._combo_scale = QComboBox()
         self._combo_scale.addItems(["1:1", "1:2", "1:5", "1:10", "2:1", "5:1"])
         self._combo_scale.currentIndexChanged.connect(lambda: self.signals.parameters_changed.emit())
 
-        # Using English labels for form layout
-        layout.addRow("Paper Size:", self._combo_size)
-        layout.addRow("Orientation:", self._combo_orientation)
-        layout.addRow("Title:", self._line_title)
-        layout.addRow("Scale:", self._combo_scale)
+        layout.addRow("Paper Size:", self._combo_size) # Translated label
+        layout.addRow("Orientation:", self._combo_orientation) # Translated label
+        layout.addRow("Title:", self._line_title) # Translated label
+        layout.addRow("Scale (Ratio):", self._combo_scale) # Translated label
 
         return widget
 
     def _get_dimensions(self, params: Dict[str, Any], pixel_scale: float = 2.83) -> Tuple[float, float]:
-        """Calculates the screen pixel size by multiplying the actual dimensions (mm) of the paper by pixel_scale."""
+        """Calculates the screen-based pixel size by multiplying the actual dimensions (mm) of the paper with the pixel scale."""
         size_str = params.get("size", "A4")
-        orient_str = params.get("orientation", "Landscape") # Updated default from Japanese to English
+        orient_str = params.get("orientation", "Landscape") # Normalized orientation string
         
         base_w, base_h = self.PAGE_SIZES.get(size_str, (210.0, 297.0))
         
-        # Logic check updated: looking for "Landscape" instead of "横"
-        if "Landscape" in orient_str: 
-            return base_h * pixel_scale, base_w * pixel_scale
-        else: # Assumes Portrait if not Landscape
+        if "Portrait" in orient_str: # Check for Portrait instead of Japanese '横'/'縦' if the UI is translated
             return base_w * pixel_scale, base_h * pixel_scale
+        else:
+            # Landscape orientation (Width = Height side)
+            return base_h * pixel_scale, base_w * pixel_scale
 
     def generate_graphics_item(self, params: Dict[str, Any], drawing_scale: float = 1.0, pixel_scale: float = 2.83) -> QGraphicsItem:
         """Generates an editable custom drawing frame group."""
         width, height = self._get_dimensions(params, pixel_scale)
         group = EditableDrawingFrameGroup(self, params)
         
-        # 1. Paper outline
+        # 1. Paper outer boundary (frame)
         frame = QGraphicsRectItem(0, 0, width, height)
         frame.setPen(QPen(QColor(100, 100, 100), 1.5, Qt.PenStyle.DashLine))
         group.addToGroup(frame)
@@ -218,11 +214,11 @@ class DrawingFramePlugin(ShapePluginInterface):
 
         # 3. Text content
         size_str = params.get("size", "A4")
-        orient_str = params.get("orientation", "Landscape") # Updated default from Japanese to English
+        orient_str = params.get("orientation", "Landscape") # Normalized orientation string
         title_str = params.get("title", "2D Drawing Layout")
         scale_str = params.get("scale", "1:1")
         
-        text_item = QGraphicsTextItem(f"Title: {title_str}\nSize: {size_str} ({orient_str})\nScale: {scale_str}")
+        text_item = QGraphicsTextItem(f"Title: {title_str}\nSize: {size_str} ({orient_str})\nScale: {scale_str}") # Translated text content
         text_item.setPos(tb_x + 5, tb_y + 5)
         text_item.setDefaultTextColor(QColor(30, 30, 30))
         group.addToGroup(text_item)
@@ -230,26 +226,54 @@ class DrawingFramePlugin(ShapePluginInterface):
         return group
 
     def export_to_dxf(self, msp: Any, params: Dict[str, Any], position: QPointF) -> None:
-        """Generates entities using actual dimensions (mm) for DXF output."""
+        """Generates the drawing frame and title block text in real dimensions (mm) for DXF output."""
         size_str = params.get("size", "A4")
-        orient_str = params.get("orientation", "Landscape") # Updated default from Japanese to English
+        orient_str = params.get("orientation", "Landscape") # Normalized orientation string
+        title_str = params.get("title", "2D Drawing Layout")
+        scale_str = params.get("scale", "1:1")
+        
         base_w, base_h = self.PAGE_SIZES.get(size_str, (210.0, 297.0))
         
-        # Logic check updated: looking for "Landscape" instead of "横"
-        if "Landscape" in orient_str:
-            w_mm, h_mm = base_h, base_w # Swapping width and height for landscape orientation
+        if "Portrait" in orient_str:
+            w_mm, h_mm = base_w, base_h  # Width=short side, Height=long side
         else:
-            w_mm, h_mm = base_w, base_h
+            w_mm, h_mm = base_h, base_w  # Width=long side, Height=short side
 
-        cx, cy = position.x(), position.y()
-        points = [(cx, cy), (cx + w_mm, cy), (cx + w_mm, cy + h_mm), (cx, cy + h_mm)]
+        x, y = position.x(), position.y()
+        
+        # 1. Paper outer boundary (polyline)
+        x1, y1 = x, y
+        x2, y2 = x + w_mm, y
+        x3, y3 = x + w_mm, y - h_mm
+        x4, y4 = x, y - h_mm
+
+        points = [(x1, y1), (x2, y2), (x3, y3), (x4, y4)]
         msp.add_lwpolyline(points, close=True)
+
+        # 2. Title block frame (approximate size/position based on mm conversion from preview px)
+        tb_w, tb_h = 85.0, 25.0  
+        tb_x = x + w_mm - tb_w - 10
+        tb_y = y - h_mm + 10     # Slightly above the bottom edge of the frame
+        
+        tb_points = [
+            (tb_x, tb_y + tb_h),
+            (tb_x + tb_w, tb_y + tb_h),
+            (tb_x + tb_w, tb_y),
+            (tb_x, tb_y)
+        ]
+        msp.add_lwpolyline(tb_points, close=True)
+
+        # 3. Adding text (ezdxf.add_text)
+        text_style = {"height": 3.5, "layer": "0"}  # Character height 3.5mm
+        
+        msp.add_text(f"Title: {title_str}", dxfattribs=text_style).set_placement((tb_x + 3, tb_y + 17)) # Translated text content
+        msp.add_text(f"Size: {size_str} ({orient_str})", dxfattribs=text_style).set_placement((tb_x + 3, tb_y + 10)) # Translated text content
+        msp.add_text(f"Scale: {scale_str}", dxfattribs=text_style).set_placement((tb_x + 3, tb_y + 3)) # Translated text content
 
     def get_current_parameters(self) -> Dict[str, Any]:
         return {
             "size": self._combo_size.currentText() if self._combo_size else "A4",
-            # Updated default from Japanese to English
-            "orientation": self._combo_orientation.currentText() if self._combo_orientation else "Landscape", 
+            "orientation": self._combo_orientation.currentText() if self._combo_orientation else "Landscape", # Normalized orientation string
             "title": self._line_title.text() if self._line_title else "2D Drawing Layout",
             "scale": self._combo_scale.currentText() if self._combo_scale else "1:1",
         }
@@ -260,8 +284,9 @@ class DrawingFramePlugin(ShapePluginInterface):
             if idx >= 0:
                 self._combo_size.setCurrentIndex(idx)
         if self._combo_orientation and "orientation" in params:
-            # Using English keys/values here for consistency
-            idx = self._combo_orientation.findText(params["orientation"])
+            # Handle both Japanese/English versions of orientation input for robustness
+            target = params["orientation"] if any(o in target for o in ["Landscape", "Portrait"]) else "Landscape" # Fallback logic based on expected values
+            idx = self._combo_orientation.findText(target) 
             if idx >= 0:
                 self._combo_orientation.setCurrentIndex(idx)
         if self._line_title and "title" in params:
