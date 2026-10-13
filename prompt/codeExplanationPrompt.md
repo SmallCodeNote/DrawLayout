@@ -245,7 +245,7 @@ class EditableCircleItem(QGraphicsEllipseItem):
         spin_dia.setValue(float(self.params.get("diameter", 80.0)))
         spin_dia.setSuffix(" mm")
 
-        form_layout.addRow("Diameter:", spin_dia) # Translated label
+        form_layout.addRow("Diameter:", spin_dia)
         layout.addWidget(form_widget)
 
         # OK / Cancel buttons for the dialog
@@ -278,7 +278,7 @@ class CirclePlugin(ShapePluginInterface):
 
     @property
     def plugin_name(self) -> str:
-        return "Circle" # Translated name
+        return "Circle"
 
     @property
     def plugin_id(self) -> str:
@@ -295,7 +295,7 @@ class CirclePlugin(ShapePluginInterface):
         self._spin_diameter.setSuffix(" mm")
         self._spin_diameter.valueChanged.connect(lambda: self.signals.parameters_changed.emit())
 
-        layout.addRow("Diameter:", self._spin_diameter) # Translated label
+        layout.addRow("Diameter:", self._spin_diameter)
 
         return widget
 
@@ -374,7 +374,7 @@ class EditableDrawingFrameGroup(QGraphicsItemGroup):
 
         # 2. Orientation selection
         combo_orient = QComboBox()
-        combo_orient.addItems(["Landscape", "Portrait"]) # Translated options
+        combo_orient.addItems(["Landscape", "Portrait"])
         current_orient = self.params.get("orientation", "Landscape")
         idx2 = combo_orient.findText(current_orient)
         if idx2 >= 0:
@@ -382,7 +382,7 @@ class EditableDrawingFrameGroup(QGraphicsItemGroup):
 
         # 3. Title information input
         line_title = QLineEdit()
-        line_title.setText(self.params.get("title", "2D Drawing Layout")) # Translated default title
+        line_title.setText(self.params.get("title", "2D Drawing Layout"))
 
         # 4. Scale selection (Scale Factor)
         combo_scale = QComboBox()
@@ -392,10 +392,10 @@ class EditableDrawingFrameGroup(QGraphicsItemGroup):
         if idx3 >= 0:
             combo_scale.setCurrentIndex(idx3)
 
-        form_layout.addRow("Paper Size:", combo_size) # Translated label
-        form_layout.addRow("Orientation:", combo_orient) # Translated label
-        form_layout.addRow("Title:", line_title) # Translated label
-        form_layout.addRow("Scale (Ratio):", combo_scale) # Translated label
+        form_layout.addRow("Paper Size:", combo_size)
+        form_layout.addRow("Orientation:", combo_orient)
+        form_layout.addRow("Title:", line_title)
+        form_layout.addRow("Scale (Ratio):", combo_scale)
         layout.addWidget(form_widget)
 
         button_box = QDialogButtonBox(
@@ -453,7 +453,7 @@ class EditableDrawingFrameGroup(QGraphicsItemGroup):
             title_str = new_params["title"]
             scale_str = new_params["scale"]
             
-            text_item = QGraphicsTextItem(f"Title: {title_str}\nSize: {size_str} ({orient_str})\nScale: {scale_str}") # Translated text content
+            text_item = QGraphicsTextItem(f"Title: {title_str}\nSize: {size_str} ({orient_str})\nScale: {scale_str}")
             text_item.setPos(tb_x + 5, tb_y + 5)
             text_item.setDefaultTextColor(QColor(30, 30, 30))
             self.addToGroup(text_item)
@@ -478,7 +478,7 @@ class DrawingFramePlugin(ShapePluginInterface):
 
     @property
     def plugin_name(self) -> str:
-        return "Drawing Frame" # Translated name
+        return "Drawing Frame"
 
     @property
     def plugin_id(self) -> str:
@@ -494,33 +494,32 @@ class DrawingFramePlugin(ShapePluginInterface):
         self._combo_size.currentIndexChanged.connect(lambda: self.signals.parameters_changed.emit())
 
         self._combo_orientation = QComboBox()
-        # Translated options for orientation in the UI
         self._combo_orientation.addItems(["Landscape", "Portrait"]) 
         self._combo_orientation.currentIndexChanged.connect(lambda: self.signals.parameters_changed.emit())
 
         self._line_title = QLineEdit()
-        self._line_title.setText("2D Drawing Layout") # Translated default title
+        self._line_title.setText("2D Drawing Layout")
         self._line_title.textChanged.connect(lambda: self.signals.parameters_changed.emit())
 
         self._combo_scale = QComboBox()
         self._combo_scale.addItems(["1:1", "1:2", "1:5", "1:10", "2:1", "5:1"])
         self._combo_scale.currentIndexChanged.connect(lambda: self.signals.parameters_changed.emit())
 
-        layout.addRow("Paper Size:", self._combo_size) # Translated label
-        layout.addRow("Orientation:", self._combo_orientation) # Translated label
-        layout.addRow("Title:", self._line_title) # Translated label
-        layout.addRow("Scale (Ratio):", self._combo_scale) # Translated label
+        layout.addRow("Paper Size:", self._combo_size)
+        layout.addRow("Orientation:", self._combo_orientation)
+        layout.addRow("Title:", self._line_title)
+        layout.addRow("Scale (Ratio):", self._combo_scale)
 
         return widget
 
     def _get_dimensions(self, params: Dict[str, Any], pixel_scale: float = 2.83) -> Tuple[float, float]:
         """Calculates the screen-based pixel size by multiplying the actual dimensions (mm) of the paper with the pixel scale."""
         size_str = params.get("size", "A4")
-        orient_str = params.get("orientation", "Landscape") # Normalized orientation string
+        orient_str = params.get("orientation", "Landscape") 
         
         base_w, base_h = self.PAGE_SIZES.get(size_str, (210.0, 297.0))
         
-        if "Portrait" in orient_str: # Check for Portrait instead of Japanese '横'/'縦' if the UI is translated
+        if "Portrait" in orient_str: 
             return base_w * pixel_scale, base_h * pixel_scale
         else:
             # Landscape orientation (Width = Height side)
@@ -547,11 +546,11 @@ class DrawingFramePlugin(ShapePluginInterface):
 
         # 3. Text content
         size_str = params.get("size", "A4")
-        orient_str = params.get("orientation", "Landscape") # Normalized orientation string
+        orient_str = params.get("orientation", "Landscape") 
         title_str = params.get("title", "2D Drawing Layout")
         scale_str = params.get("scale", "1:1")
         
-        text_item = QGraphicsTextItem(f"Title: {title_str}\nSize: {size_str} ({orient_str})\nScale: {scale_str}") # Translated text content
+        text_item = QGraphicsTextItem(f"Title: {title_str}\nSize: {size_str} ({orient_str})\nScale: {scale_str}") 
         text_item.setPos(tb_x + 5, tb_y + 5)
         text_item.setDefaultTextColor(QColor(30, 30, 30))
         group.addToGroup(text_item)
@@ -561,7 +560,7 @@ class DrawingFramePlugin(ShapePluginInterface):
     def export_to_dxf(self, msp: Any, params: Dict[str, Any], position: QPointF) -> None:
         """Generates the drawing frame and title block text in real dimensions (mm) for DXF output."""
         size_str = params.get("size", "A4")
-        orient_str = params.get("orientation", "Landscape") # Normalized orientation string
+        orient_str = params.get("orientation", "Landscape") 
         title_str = params.get("title", "2D Drawing Layout")
         scale_str = params.get("scale", "1:1")
         
@@ -599,14 +598,14 @@ class DrawingFramePlugin(ShapePluginInterface):
         # 3. Adding text (ezdxf.add_text)
         text_style = {"height": 3.5, "layer": "0"}  # Character height 3.5mm
         
-        msp.add_text(f"Title: {title_str}", dxfattribs=text_style).set_placement((tb_x + 3, tb_y + 17)) # Translated text content
-        msp.add_text(f"Size: {size_str} ({orient_str})", dxfattribs=text_style).set_placement((tb_x + 3, tb_y + 10)) # Translated text content
-        msp.add_text(f"Scale: {scale_str}", dxfattribs=text_style).set_placement((tb_x + 3, tb_y + 3)) # Translated text content
+        msp.add_text(f"Title: {title_str}", dxfattribs=text_style).set_placement((tb_x + 3, tb_y + 17))
+        msp.add_text(f"Size: {size_str} ({orient_str})", dxfattribs=text_style).set_placement((tb_x + 3, tb_y + 10))
+        msp.add_text(f"Scale: {scale_str}", dxfattribs=text_style).set_placement((tb_x + 3, tb_y + 3))
 
     def get_current_parameters(self) -> Dict[str, Any]:
         return {
             "size": self._combo_size.currentText() if self._combo_size else "A4",
-            "orientation": self._combo_orientation.currentText() if self._combo_orientation else "Landscape", # Normalized orientation string
+            "orientation": self._combo_orientation.currentText() if self._combo_orientation else "Landscape", 
             "title": self._line_title.text() if self._line_title else "2D Drawing Layout",
             "scale": self._combo_scale.currentText() if self._combo_scale else "1:1",
         }
@@ -617,8 +616,7 @@ class DrawingFramePlugin(ShapePluginInterface):
             if idx >= 0:
                 self._combo_size.setCurrentIndex(idx)
         if self._combo_orientation and "orientation" in params:
-            # Handle both Japanese/English versions of orientation input for robustness
-            target = params["orientation"] if any(o in target for o in ["Landscape", "Portrait"]) else "Landscape" # Fallback logic based on expected values
+            target = params["orientation"] if any(o in target for o in ["Landscape", "Portrait"]) else "Landscape"
             idx = self._combo_orientation.findText(target) 
             if idx >= 0:
                 self._combo_orientation.setCurrentIndex(idx)
@@ -664,7 +662,7 @@ class EditableRectItem(QGraphicsRectItem):
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         """Displays a separate parameter editing dialog on double-click."""
         dialog = QDialog()
-        dialog.setWindowTitle(f"{self.plugin.plugin_name} - Parameter Editing") # Translated title
+        dialog.setWindowTitle(f"{self.plugin.plugin_name} - Parameter Editing") 
         dialog.resize(300, 150)
         
         layout = QVBoxLayout(dialog)
@@ -683,8 +681,8 @@ class EditableRectItem(QGraphicsRectItem):
         spin_h.setValue(float(self.params.get("height", 60.0)))
         spin_h.setSuffix(" mm")
 
-        form_layout.addRow("Width:", spin_w) # Translated label
-        form_layout.addRow("Height:", spin_h) # Translated label
+        form_layout.addRow("Width:", spin_w)
+        form_layout.addRow("Height:", spin_h)
         layout.addWidget(form_widget)
 
         # OK / Cancel buttons for the dialog
@@ -722,7 +720,7 @@ class RectanglePlugin(ShapePluginInterface):
 
     @property
     def plugin_name(self) -> str:
-        return "Rectangle" # Translated name
+        return "Rectangle"
 
     @property
     def plugin_id(self) -> str:
@@ -745,8 +743,8 @@ class RectanglePlugin(ShapePluginInterface):
         self._spin_height.setSuffix(" mm")
         self._spin_height.valueChanged.connect(lambda: self.signals.parameters_changed.emit())
 
-        layout.addRow("Width:", self._spin_width) # Translated label
-        layout.addRow("Height:", self._spin_height) # Translated label
+        layout.addRow("Width:", self._spin_width)
+        layout.addRow("Height:", self._spin_height)
 
         return widget
 
@@ -767,7 +765,7 @@ class RectanglePlugin(ShapePluginInterface):
         cx, cy = position.x(), position.y()
 
         # Adjust coordinates for DXF model space (assuming center-based preview)
-        x1, y1 = cx - w / 2.0, cy - h / 2.0 # Bottom Left in Qt view coords if Y is inverted later by export_manager
+        x1, y1 = cx - w / 2.0, cy - h / 2.0 
         x2, y2 = cx + w / 2.0, cy - h / 2.0
         x3, y3 = cx + w / 2.0, cy + h / 2.0
         x4, y4 = cx - w / 2.0, cy + h / 2.0
@@ -840,7 +838,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle("2D CAD Design System - PySide6") # Translated title
+        self.setWindowTitle("2D CAD Design System - PySide6") 
         self.resize(1280, 800)
 
         self.plugin_manager = PluginManager()
@@ -862,12 +860,12 @@ class MainWindow(QMainWindow):
         left_layout = QVBoxLayout(left_panel)
 
         # 0. Drawing overall settings group (Scale & Pixel Scale Factor)
-        group_drawing = QGroupBox("Drawing Overall Settings") # Translated title
+        group_drawing = QGroupBox("Drawing Overall Settings") 
         drawing_layout = QVBoxLayout(group_drawing)
         
         # Drawing scale
         scale_layout = QHBoxLayout()
-        scale_layout.addWidget(QLabel("Drawing Scale:")) # Translated label
+        scale_layout.addWidget(QLabel("Drawing Scale:")) 
         self.combo_main_scale = QComboBox()
         self.combo_main_scale.addItems(["1:1", "1:2", "1:5", "1:10", "2:1", "5:1"])
         self.combo_main_scale.currentIndexChanged.connect(self._on_drawing_setting_changed)
@@ -876,7 +874,7 @@ class MainWindow(QMainWindow):
 
         # Pixel scale factor (px/mm)
         px_layout = QHBoxLayout()
-        px_layout.addWidget(QLabel("Display Multiplier (px/mm):")) # Translated label
+        px_layout.addWidget(QLabel("Display Multiplier (px/mm):")) 
         self.spin_px_scale = QDoubleSpinBox()
         self.spin_px_scale.setRange(0.5, 20.0)
         self.spin_px_scale.setSingleStep(0.1)
@@ -888,7 +886,7 @@ class MainWindow(QMainWindow):
         left_layout.addWidget(group_drawing)
 
         # 1. Plugin selection group
-        group_plugin = QGroupBox("Shape / Layout Plugins") # Translated title
+        group_plugin = QGroupBox("Shape / Layout Plugins") 
         plugin_layout = QVBoxLayout(group_plugin)
         self.combo_plugins = QComboBox()
         self.combo_plugins.currentIndexChanged.connect(self._on_plugin_changed)
@@ -898,28 +896,28 @@ class MainWindow(QMainWindow):
         self.param_widget_layout = QVBoxLayout(self.param_widget_container)
         plugin_layout.addWidget(self.param_widget_container)
 
-        self.btn_add_shape = QPushButton("Add / Update Drawing") # Translated button text
+        self.btn_add_shape = QPushButton("Add / Update Drawing") 
         self.btn_add_shape.clicked.connect(self._add_shape_to_scene)
         plugin_layout.addWidget(self.btn_add_shape)
         left_layout.addWidget(group_plugin)
 
         # 2. Configuration save/load group
-        group_config = QGroupBox("Project Management (JSON)") # Translated title
+        group_config = QGroupBox("Project Management (JSON)") 
         config_layout = QVBoxLayout(group_config)
-        self.btn_save_config = QPushButton("Save Settings (JSON)") # Translated button text
+        self.btn_save_config = QPushButton("Save Settings (JSON)") 
         self.btn_save_config.clicked.connect(self._save_config)
-        self.btn_load_config = QPushButton("Load Settings (JSON)") # Translated button text
+        self.btn_load_config = QPushButton("Load Settings (JSON)") 
         self.btn_load_config.clicked.connect(self._load_config)
         config_layout.addWidget(self.btn_save_config)
         config_layout.addWidget(self.btn_load_config)
         left_layout.addWidget(group_config)
 
         # 3. Export group
-        group_export = QGroupBox("Drawing Output") # Translated title
+        group_export = QGroupBox("Drawing Output") 
         export_layout = QVBoxLayout(group_export)
-        self.btn_export_svg = QPushButton("Export to SVG File") # Translated button text
+        self.btn_export_svg = QPushButton("Export to SVG File") 
         self.btn_export_svg.clicked.connect(self._export_svg)
-        self.btn_export_dxf = QPushButton("Export to DXF File") # Translated button text
+        self.btn_export_dxf = QPushButton("Export to DXF File") 
         self.btn_export_dxf.clicked.connect(self._export_dxf)
         export_layout.addWidget(self.btn_export_svg)
         export_layout.addWidget(self.btn_export_dxf)
@@ -1075,9 +1073,9 @@ class MainWindow(QMainWindow):
         try:
             with open(file_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
-            QMessageBox.information(self, "Success", "Configuration saved to JSON.") # Translated message
+            QMessageBox.information(self, "Success", "Configuration saved to JSON.") 
         except Exception as e:
-            QMessageBox.critical(self, "Error", f"Failed to save configuration: {e}") # Translated message
+            QMessageBox.critical(self, "Error", f"Failed to save configuration: {e}")
 
     def _load_config(self) -> None:
         """Loads a scene configuration from a JSON file."""
@@ -1126,30 +1124,30 @@ class MainWindow(QMainWindow):
                     self.scene.addItem(item)
                     self.placed_items.append(item)
 
-            QMessageBox.information(self, "Success", "Configuration restored.") # Translated message
+            QMessageBox.information(self, "Success", "Configuration restored.") 
         except Exception as e:
-            QMessageBox.critical(self, "Error", f"Failed to load configuration: {e}") # Translated message
+            QMessageBox.critical(self, "Error", f"Failed to load configuration: {e}")
 
     def _export_svg(self) -> None:
         """Exports the current scene content to an SVG file."""
         file_path, _ = QFileDialog.getSaveFileName(self, "SVG Export", "drawing.svg", "SVG Files (*.svg)")
         if file_path:
             if ExportManager.export_to_svg(self.scene, file_path):
-                QMessageBox.information(self, "Success", "SVG export complete.") # Translated message
+                QMessageBox.information(self, "Success", "SVG export complete.") 
             else:
-                QMessageBox.critical(self, "Error", "Failed to export SVG.") # Translated message
+                QMessageBox.critical(self, "Error", "Failed to export SVG.")
 
     def _export_dxf(self) -> None:
         """Exports all placed items into a DXF file."""
         file_path, _ = QFileDialog.getSaveFileName(self, "DXF Export", "drawing.dxf", "DXF Files (*.dxf)")
         if file_path:
             elements = self._collect_placed_elements()
-            scene_height = self.scene.sceneRect().height()  # Get the overall scene height
+            scene_height = self.scene.sceneRect().height() 
             
             if ExportManager.export_to_dxf(elements, self.plugin_manager, file_path, pixel_scale=self._getPixelScale(), scene_height=scene_height):
-                QMessageBox.information(self, "Success", "DXF export complete.") # Translated message
+                QMessageBox.information(self, "Success", "DXF export complete.") 
             else:
-                QMessageBox.critical(self, "Error", "Failed to export DXF.") # Translated message
+                QMessageBox.critical(self, "Error", "Failed to export DXF.")
 
 
 if __name__ == "__main__":
