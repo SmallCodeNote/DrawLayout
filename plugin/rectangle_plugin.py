@@ -27,7 +27,7 @@ class EditableRectItem(QGraphicsRectItem):
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         """Displays a separate parameter editing dialog on double-click."""
         dialog = QDialog()
-        dialog.setWindowTitle(f"{self.plugin.plugin_name} - Parameter Editing") # Translated title
+        dialog.setWindowTitle(f"{self.plugin.plugin_name} - Parameter Editing") 
         dialog.resize(300, 150)
         
         layout = QVBoxLayout(dialog)
@@ -46,8 +46,8 @@ class EditableRectItem(QGraphicsRectItem):
         spin_h.setValue(float(self.params.get("height", 60.0)))
         spin_h.setSuffix(" mm")
 
-        form_layout.addRow("Width:", spin_w) # Translated label
-        form_layout.addRow("Height:", spin_h) # Translated label
+        form_layout.addRow("Width:", spin_w)
+        form_layout.addRow("Height:", spin_h)
         layout.addWidget(form_widget)
 
         # OK / Cancel buttons for the dialog
@@ -85,7 +85,7 @@ class RectanglePlugin(ShapePluginInterface):
 
     @property
     def plugin_name(self) -> str:
-        return "Rectangle" # Translated name
+        return "Rectangle"
 
     @property
     def plugin_id(self) -> str:
@@ -108,8 +108,8 @@ class RectanglePlugin(ShapePluginInterface):
         self._spin_height.setSuffix(" mm")
         self._spin_height.valueChanged.connect(lambda: self.signals.parameters_changed.emit())
 
-        layout.addRow("Width:", self._spin_width) # Translated label
-        layout.addRow("Height:", self._spin_height) # Translated label
+        layout.addRow("Width:", self._spin_width)
+        layout.addRow("Height:", self._spin_height)
 
         return widget
 
@@ -130,7 +130,7 @@ class RectanglePlugin(ShapePluginInterface):
         cx, cy = position.x(), position.y()
 
         # Adjust coordinates for DXF model space (assuming center-based preview)
-        x1, y1 = cx - w / 2.0, cy - h / 2.0 # Bottom Left in Qt view coords if Y is inverted later by export_manager
+        x1, y1 = cx - w / 2.0, cy - h / 2.0 
         x2, y2 = cx + w / 2.0, cy - h / 2.0
         x3, y3 = cx + w / 2.0, cy + h / 2.0
         x4, y4 = cx - w / 2.0, cy + h / 2.0
