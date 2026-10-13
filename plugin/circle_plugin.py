@@ -41,7 +41,7 @@ class EditableCircleItem(QGraphicsEllipseItem):
         spin_dia.setValue(float(self.params.get("diameter", 80.0)))
         spin_dia.setSuffix(" mm")
 
-        form_layout.addRow("Diameter:", spin_dia) # Translated label
+        form_layout.addRow("Diameter:", spin_dia)
         layout.addWidget(form_widget)
 
         # OK / Cancel buttons for the dialog
@@ -74,7 +74,7 @@ class CirclePlugin(ShapePluginInterface):
 
     @property
     def plugin_name(self) -> str:
-        return "Circle" # Translated name
+        return "Circle"
 
     @property
     def plugin_id(self) -> str:
@@ -91,7 +91,7 @@ class CirclePlugin(ShapePluginInterface):
         self._spin_diameter.setSuffix(" mm")
         self._spin_diameter.valueChanged.connect(lambda: self.signals.parameters_changed.emit())
 
-        layout.addRow("Diameter:", self._spin_diameter) # Translated label
+        layout.addRow("Diameter:", self._spin_diameter)
 
         return widget
 
