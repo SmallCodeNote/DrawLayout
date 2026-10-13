@@ -45,7 +45,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle("2D CAD Design System - PySide6") # Translated title
+        self.setWindowTitle("2D CAD Design System - PySide6") 
         self.resize(1280, 800)
 
         self.plugin_manager = PluginManager()
@@ -67,12 +67,12 @@ class MainWindow(QMainWindow):
         left_layout = QVBoxLayout(left_panel)
 
         # 0. Drawing overall settings group (Scale & Pixel Scale Factor)
-        group_drawing = QGroupBox("Drawing Overall Settings") # Translated title
+        group_drawing = QGroupBox("Drawing Overall Settings") 
         drawing_layout = QVBoxLayout(group_drawing)
         
         # Drawing scale
         scale_layout = QHBoxLayout()
-        scale_layout.addWidget(QLabel("Drawing Scale:")) # Translated label
+        scale_layout.addWidget(QLabel("Drawing Scale:")) 
         self.combo_main_scale = QComboBox()
         self.combo_main_scale.addItems(["1:1", "1:2", "1:5", "1:10", "2:1", "5:1"])
         self.combo_main_scale.currentIndexChanged.connect(self._on_drawing_setting_changed)
@@ -81,7 +81,7 @@ class MainWindow(QMainWindow):
 
         # Pixel scale factor (px/mm)
         px_layout = QHBoxLayout()
-        px_layout.addWidget(QLabel("Display Multiplier (px/mm):")) # Translated label
+        px_layout.addWidget(QLabel("Display Multiplier (px/mm):")) 
         self.spin_px_scale = QDoubleSpinBox()
         self.spin_px_scale.setRange(0.5, 20.0)
         self.spin_px_scale.setSingleStep(0.1)
@@ -93,7 +93,7 @@ class MainWindow(QMainWindow):
         left_layout.addWidget(group_drawing)
 
         # 1. Plugin selection group
-        group_plugin = QGroupBox("Shape / Layout Plugins") # Translated title
+        group_plugin = QGroupBox("Shape / Layout Plugins") 
         plugin_layout = QVBoxLayout(group_plugin)
         self.combo_plugins = QComboBox()
         self.combo_plugins.currentIndexChanged.connect(self._on_plugin_changed)
@@ -103,28 +103,28 @@ class MainWindow(QMainWindow):
         self.param_widget_layout = QVBoxLayout(self.param_widget_container)
         plugin_layout.addWidget(self.param_widget_container)
 
-        self.btn_add_shape = QPushButton("Add / Update Drawing") # Translated button text
+        self.btn_add_shape = QPushButton("Add / Update Drawing") 
         self.btn_add_shape.clicked.connect(self._add_shape_to_scene)
         plugin_layout.addWidget(self.btn_add_shape)
         left_layout.addWidget(group_plugin)
 
         # 2. Configuration save/load group
-        group_config = QGroupBox("Project Management (JSON)") # Translated title
+        group_config = QGroupBox("Project Management (JSON)") 
         config_layout = QVBoxLayout(group_config)
-        self.btn_save_config = QPushButton("Save Settings (JSON)") # Translated button text
+        self.btn_save_config = QPushButton("Save Settings (JSON)") 
         self.btn_save_config.clicked.connect(self._save_config)
-        self.btn_load_config = QPushButton("Load Settings (JSON)") # Translated button text
+        self.btn_load_config = QPushButton("Load Settings (JSON)") 
         self.btn_load_config.clicked.connect(self._load_config)
         config_layout.addWidget(self.btn_save_config)
         config_layout.addWidget(self.btn_load_config)
         left_layout.addWidget(group_config)
 
         # 3. Export group
-        group_export = QGroupBox("Drawing Output") # Translated title
+        group_export = QGroupBox("Drawing Output") 
         export_layout = QVBoxLayout(group_export)
-        self.btn_export_svg = QPushButton("Export to SVG File") # Translated button text
+        self.btn_export_svg = QPushButton("Export to SVG File") 
         self.btn_export_svg.clicked.connect(self._export_svg)
-        self.btn_export_dxf = QPushButton("Export to DXF File") # Translated button text
+        self.btn_export_dxf = QPushButton("Export to DXF File") 
         self.btn_export_dxf.clicked.connect(self._export_dxf)
         export_layout.addWidget(self.btn_export_svg)
         export_layout.addWidget(self.btn_export_dxf)
@@ -280,9 +280,9 @@ class MainWindow(QMainWindow):
         try:
             with open(file_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
-            QMessageBox.information(self, "Success", "Configuration saved to JSON.") # Translated message
+            QMessageBox.information(self, "Success", "Configuration saved to JSON.") 
         except Exception as e:
-            QMessageBox.critical(self, "Error", f"Failed to save configuration: {e}") # Translated message
+            QMessageBox.critical(self, "Error", f"Failed to save configuration: {e}")
 
     def _load_config(self) -> None:
         """Loads a scene configuration from a JSON file."""
@@ -331,30 +331,30 @@ class MainWindow(QMainWindow):
                     self.scene.addItem(item)
                     self.placed_items.append(item)
 
-            QMessageBox.information(self, "Success", "Configuration restored.") # Translated message
+            QMessageBox.information(self, "Success", "Configuration restored.") 
         except Exception as e:
-            QMessageBox.critical(self, "Error", f"Failed to load configuration: {e}") # Translated message
+            QMessageBox.critical(self, "Error", f"Failed to load configuration: {e}")
 
     def _export_svg(self) -> None:
         """Exports the current scene content to an SVG file."""
         file_path, _ = QFileDialog.getSaveFileName(self, "SVG Export", "drawing.svg", "SVG Files (*.svg)")
         if file_path:
             if ExportManager.export_to_svg(self.scene, file_path):
-                QMessageBox.information(self, "Success", "SVG export complete.") # Translated message
+                QMessageBox.information(self, "Success", "SVG export complete.") 
             else:
-                QMessageBox.critical(self, "Error", "Failed to export SVG.") # Translated message
+                QMessageBox.critical(self, "Error", "Failed to export SVG.")
 
     def _export_dxf(self) -> None:
         """Exports all placed items into a DXF file."""
         file_path, _ = QFileDialog.getSaveFileName(self, "DXF Export", "drawing.dxf", "DXF Files (*.dxf)")
         if file_path:
             elements = self._collect_placed_elements()
-            scene_height = self.scene.sceneRect().height()  # Get the overall scene height
+            scene_height = self.scene.sceneRect().height() 
             
             if ExportManager.export_to_dxf(elements, self.plugin_manager, file_path, pixel_scale=self._getPixelScale(), scene_height=scene_height):
-                QMessageBox.information(self, "Success", "DXF export complete.") # Translated message
+                QMessageBox.information(self, "Success", "DXF export complete.") 
             else:
-                QMessageBox.critical(self, "Error", "Failed to export DXF.") # Translated message
+                QMessageBox.critical(self, "Error", "Failed to export DXF.")
 
 
 if __name__ == "__main__":
